@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:quizzler/question.dart';
 
 class QuizBrain {
@@ -32,102 +31,30 @@ class QuizBrain {
         true),
   ];
 
-  List<Widget> _scoreKeeper = [
-    Text(
-      '',
-      style: TextStyle(
-        fontSize: 20,
-        color: Colors.white,
-      ),
-    ),
-  ];
-
-  // void nextQuestion() {
-  //   if (_questionNo < _questionBank.length - 1) {
-  //     _questionNo++;
-  //   }
-  // }
+  void nextQuestion() {
+    if (_questionNo < _questionBank.length - 1) {
+      _questionNo++;
+    }
+  }
 
   String getQuestionText() {
-    if (_questionNo >= _questionBank.length) {
-      return 'Done';
-    } else
-      return _questionBank[_questionNo].question;
+    return _questionBank[_questionNo].question;
   }
 
   bool getCorrectAnswer() {
-    if (_questionNo >= _questionBank.length) {
+    return _questionBank[_questionNo].answer;
+  }
+
+  bool isFinished() {
+    if (_questionNo >= _questionBank.length - 1) {
+      print('Now returning true');
+      return true;
+    } else {
       return false;
-    } else
-      return _questionBank[_questionNo].answer;
-  }
-
-  void nextScoreTrue() {
-    print('questionNo: $_questionNo');
-    print(_questionBank.length);
-
-    if (_questionNo == _questionBank.length - 1) {
-      if (_questionBank[_questionNo].answer == true) {
-        _scoreKeeper.add(Icon(
-          Icons.check,
-          color: Colors.green,
-        ));
-      } else {
-        _scoreKeeper.add(Icon(
-          Icons.close,
-          color: Colors.red,
-        ));
-      }
-      _questionNo++;
-    } else if (_questionNo >= _questionBank.length - 1) {
-    } else if (_questionBank[_questionNo].answer == true) {
-      _scoreKeeper.add(Icon(
-        Icons.check,
-        color: Colors.green,
-      ));
-      _questionNo++;
-    } else {
-      _scoreKeeper.add(Icon(
-        Icons.close,
-        color: Colors.red,
-      ));
-      _questionNo++;
     }
   }
 
-  void nextScoreFalse() {
-    print('questionNo: $_questionNo');
-    print(_questionBank.length);
-    if (_questionNo == _questionBank.length - 1) {
-      if (_questionBank[_questionNo].answer == false) {
-        _scoreKeeper.add(Icon(
-          Icons.check,
-          color: Colors.green,
-        ));
-      } else {
-        _scoreKeeper.add(Icon(
-          Icons.close,
-          color: Colors.red,
-        ));
-      }
-      _questionNo++;
-    } else if (_questionNo >= _questionBank.length - 1) {
-    } else if (_questionBank[_questionNo].answer == false) {
-      _scoreKeeper.add(Icon(
-        Icons.check,
-        color: Colors.green,
-      ));
-      _questionNo++;
-    } else {
-      _scoreKeeper.add(Icon(
-        Icons.close,
-        color: Colors.red,
-      ));
-      _questionNo++;
-    }
-  }
-
-  List<Widget> getScoreKeeper() {
-    return _scoreKeeper;
+  void reset() {
+    _questionNo = 0;
   }
 }

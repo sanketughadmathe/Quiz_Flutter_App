@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'quiz_brain.dart';
 
 QuizBrain quizBrain = QuizBrain();
@@ -28,6 +29,72 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  int userScore = 0;
+  int score = 0;
+
+  List<Widget> scoreKeeper = [
+    Text(
+      '',
+      style: TextStyle(
+        fontSize: 20,
+        color: Colors.white,
+      ),
+    ),
+  ];
+
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = quizBrain.getCorrectAnswer();
+
+    setState(() {
+      if (quizBrain.isFinished()) {
+        var count = scoreKeeper.length;
+        Alert(
+          context: context,
+          title: "Finished!",
+          desc: "You've reached end of the quiz",
+          buttons: [
+            DialogButton(
+              child: Text(
+                "COOL",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              onPressed: () => Navigator.pop(context),
+              width: 120,
+            )
+          ],
+        ).show();
+
+        quizBrain.reset();
+
+        scoreKeeper = [
+          Text(
+            '',
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
+        ];
+      } else {
+        if (correctAnswer == userPickedAnswer) {
+          scoreKeeper.add(Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+          userScore++;
+          score++;
+        } else {
+          scoreKeeper.add(Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+          score++;
+        }
+        quizBrain.nextQuestion();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -51,12 +118,11 @@ class _QuizPageState extends State<QuizPage> {
           ),
         ),
         Expanded(
-          flex: 1,
           child: Padding(
             padding: EdgeInsets.all(15.0),
             child: TextButton(
-              // textColor: Colors.white,
-              // color: Colors.0xFF607d8b #607d8b #C8BCCF,
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.green)),
               child: Text(
                 'True',
                 style: TextStyle(
@@ -65,33 +131,18 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                bool correctAnswer = quizBrain.getCorrectAnswer();
-
-                if (correctAnswer == true) {
-                  print("user got it right!");
-                } else {
-                  print("user got it wrong!");
-                }
-
-                setState(
-                  () {
-                    quizBrain.nextScoreTrue();
-                    // quizBrain.nextQuestion();
-                  },
-                );
                 //The user picked true.
+                checkAnswer(true);
               },
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.green)),
             ),
           ),
         ),
         Expanded(
-          flex: 1,
           child: Padding(
             padding: EdgeInsets.all(15.0),
             child: TextButton(
-              // color: Colors.red,
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.red)),
               child: Text(
                 'False',
                 style: TextStyle(
@@ -100,38 +151,16 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                bool correctAnswer = quizBrain.getCorrectAnswer();
-
-                if (correctAnswer == false) {
-                  print("user got it right!");
-                } else {
-                  print("user got it wrong!");
-                }
-
-                setState(
-                  () {
-                    quizBrain.nextScoreFalse();
-                    // quizBrain.nextQuestion();
-                  },
-                );
                 //The user picked false.
+                checkAnswer(false);
               },
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.red)),
             ),
           ),
         ),
         Row(
-          children: quizBrain.getScoreKeeper(),
+          children: scoreKeeper,
         )
-        //TODO: Add a Row here as your score keeper
       ],
     );
   }
 }
-
-/*
-question1: 'You can lead a cow down stairs but not up stairs.', false,
-question2: 'Approximately one quarter of human bones are in the feet.', true,
-question3: 'A slug\'s blood is green.', true,
-*/
